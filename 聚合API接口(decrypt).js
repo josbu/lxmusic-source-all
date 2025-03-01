@@ -1,5 +1,5 @@
 /*!
- * @name 聚合API接口 (by lerd)
+ * @name 聚合API接口 (by lerd)（decrypt)
  * @description 理论可听全平台无损
  * @version v2.0.0
  * @author lerd
