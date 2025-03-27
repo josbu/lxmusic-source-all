@@ -10,3 +10,5 @@
 2025.3.1解密了一些音源
 
 2025.3.15更新ikun，添加至尊（消费者权益日更新）
+
+2025.3.27欢迎大家提交音源，提交音源支持issue & pull request & mailto:mail@xlz767.ip-ddns.com
