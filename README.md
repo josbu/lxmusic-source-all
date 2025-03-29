@@ -12,3 +12,5 @@
 2025.3.15更新ikun，添加至尊（消费者权益日更新）
 
 2025.3.27欢迎大家提交音源，提交音源支持issue & pull request & mailto:mail@xlz767.ip-ddns.com
+
+2025.3.29 废材公社更新
