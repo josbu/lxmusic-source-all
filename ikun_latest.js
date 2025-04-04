@@ -1,43 +1,21 @@
 /*!
  * @name ikun音源
- * @description 请不要分享此音源，谢谢。
-邮箱: ikun@ikunshare.com
-QQ: 3507420008
-TG: @ikun0014
- * @version v509
+ * @description 请不要分享此音源，谢谢 951962664
+ * @version v515
  * @author ikunshare
- * @repository https://github.com/lxmusics/lx-music-api-server
  */
 
-// 是否开启开发模式
 const DEV_ENABLE = false
-// 是否开启更新提醒
 const UPDATE_ENABLE = true
-// 服务端地址
 const API_URL = "https://api.ikunshare.com"
-// 服务端配置的请求key
 const API_KEY = `public_source`
-// 音质配置(key为音源名称,不要乱填.如果你账号为VIP可以填写到hires)
-// 全部的支持值: ['128k', '320k', 'flac', 'flac24bit']
-const MUSIC_QUALITY = JSON.parse('{"kw":["128k","320k","flac","flac24bit","master"],"kg":["128k","320k","flac","flac24bit","master"],"tx":["128k","320k","flac","flac24bit","dolby","effect","effect_plus","master"],"wy":["128k","320k","flac","flac24bit","sky","dolby","master"],"mg":["128k","320k","flac","flac24bit"]}');
-// 音源配置(默认为自动生成,可以修改为手动)
+const MUSIC_QUALITY = JSON.parse('{"kw":["128k","320k","flac","hires"],"kg":["128k","320k","flac","hires","atmos","master"],"tx":["128k","320k","flac","hires","atmos","atmos_plus","master"],"wy":["128k","320k","flac","hires","atmos","master"],"mg":["128k","320k","flac","hires"]}');
 const MUSIC_SOURCE = Object.keys(MUSIC_QUALITY);
 
-/**
- * 下面的东西就不要修改了
- */
 const { EVENT_NAMES, request, on, send, utils, env, version } = globalThis.lx;
 
-// MD5值,用来检查更新
-const SCRIPT_MD5 = "";
+const SCRIPT_MD5 = "0312db081d04b8aafd7632dda9400419";
 
-/**
- * URL请求
- *
- * @param {string} url - 请求的地址
- * @param {object} options - 请求的配置文件
- * @return {Promise} 携带响应体的Promise对象
- */
 const httpFetch = (url, options = { method: "GET" }) => {
   return new Promise((resolve, reject) => {
     console.log("--- start --- " + url);
@@ -49,25 +27,11 @@ const httpFetch = (url, options = { method: "GET" }) => {
   });
 };
 
-/**
- * Encodes the given data to base64.
- *
- * @param {type} data - the data to be encoded
- * @return {string} the base64 encoded string
- */
 const handleBase64Encode = (data) => {
   var data = utils.buffer.from(data, "utf-8");
   return utils.buffer.bufToString(data, "base64");
 };
 
-/**
- *
- * @param {string} source - 音源
- * @param {object} musicInfo - 歌曲信息
- * @param {string} quality - 音质
- * @returns {Promise<string>} 歌曲播放链接
- * @throws {Error} - 错误消息
- */
 const handleGetMusicUrl = async (source, musicInfo, quality) => {
   const songId = musicInfo.hash ?? musicInfo.songmid;
   const request = await httpFetch(
@@ -88,47 +52,36 @@ const handleGetMusicUrl = async (source, musicInfo, quality) => {
   if (!body || isNaN(Number(body.code))) throw new Error("unknow error");
   if (env != "mobile") console.groupEnd();
   switch (body.code) {
-    case 0:
+    case 200:
       console.log(
         `handleGetMusicUrl(${source}_${musicInfo.songmid}, ${quality}) success, URL: ${body.data}`
       );
       return body.data;
-    case 1:
+    case 403:
       console.log(
         `handleGetMusicUrl(${source}_${musicInfo.songmid}, ${quality}) failed: ip被封禁`
       );
-      throw new Error("block ip");
-    case 2:
+      throw new Error("IP被封禁");
+    case 500:
       console.log(
         `handleGetMusicUrl(${source}_${musicInfo.songmid}, ${quality}) failed, ${body.msg}`
       );
-      throw new Error("get music url failed");
-    case 4:
-      console.log(
-        `handleGetMusicUrl(${source}_${musicInfo.songmid}, ${quality}) failed, 远程服务器错误`
-      );
-      throw new Error("internal server error");
-    case 5:
+      throw new Error("获取URL失败");
+    case 429:
       console.log(
         `handleGetMusicUrl(${source}_${musicInfo.songmid}, ${quality}) failed, 请求过于频繁，请休息一下吧`
       );
-      throw new Error("too many requests");
-    case 6:
-      console.log(
-        `handleGetMusicUrl(${source}_${musicInfo.songmid}, ${quality}) failed, 请求参数错误`
-      );
-      throw new Error("param error");
+      throw new Error("请求过速");
     default:
       console.log(
         `handleGetMusicUrl(${source}_${
           musicInfo.songmid
-        }, ${quality}) failed, ${body.msg ? body.msg : "unknow error"}`
+        }, ${quality}) failed, ${body.msg ? body.msg : "未知错误"}`
       );
-      throw new Error(body.msg ?? "unknow error");
+      throw new Error(body.msg ?? "未知错误");
   }
 };
 
-// 检查源脚本是否有更新
 const checkUpdate = async () => {
   const request = await httpFetch(
     `${API_URL}/script?key=${API_KEY}&checkUpdate=${SCRIPT_MD5}`,
@@ -144,7 +97,7 @@ const checkUpdate = async () => {
   );
   const { body } = request;
 
-  if (!body || body.code !== 0) console.log("checkUpdate failed");
+  if (!body || body.code !== 200) console.log("checkUpdate failed");
   else {
     console.log("checkUpdate success");
     if (body.data != null) {
@@ -156,7 +109,6 @@ const checkUpdate = async () => {
   }
 };
 
-// 生成歌曲信息
 const musicSources = {};
 MUSIC_SOURCE.forEach((item) => {
   musicSources[item] = {
@@ -167,7 +119,6 @@ MUSIC_SOURCE.forEach((item) => {
   };
 });
 
-// 监听 LX Music 请求事件
 on(EVENT_NAMES.request, ({ action, source, info }) => {
   switch (action) {
     case "musicUrl":
@@ -191,9 +142,8 @@ on(EVENT_NAMES.request, ({ action, source, info }) => {
   }
 });
 
-// 检查更新
 if (UPDATE_ENABLE) checkUpdate();
-// 向 LX Music 发送初始化成功事件
+
 send(EVENT_NAMES.inited, {
   status: true,
   openDevTools: DEV_ENABLE,
