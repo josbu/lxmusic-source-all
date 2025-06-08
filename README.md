@@ -16,5 +16,5 @@
 2025.3.29 废材公社更新
 
 
-[![image](iframe组件截图图片链接)](https://yxvm.com/)
+[![image]](https://yxvm.com/)
 [NodeSupport](https://github.com/NodeSeekDev/NodeSupport)赞助了本项目
