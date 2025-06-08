@@ -14,3 +14,7 @@
 2025.3.27欢迎大家提交音源，提交音源支持issue & pull request & mailto:mail@xlz767.ip-ddns.com
 
 2025.3.29 废材公社更新
+
+
+[![image](iframe组件截图图片链接)](https://yxvm.com/)
+[NodeSupport](https://github.com/NodeSeekDev/NodeSupport)赞助了本项目
