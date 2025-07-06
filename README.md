@@ -15,6 +15,8 @@
 
 2025.3.29 废材公社更新
 
+2025.7.6公众号v3
+
 
 [YxVM赞助了本项目](https://yxvm.com/)
 [NodeSupport](https://github.com/NodeSeekDev/NodeSupport)赞助了本项目
